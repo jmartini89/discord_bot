@@ -12,14 +12,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class Bot {
-	private static final String BOT_TOKEN = "OTI3MjA2Mjk4MTA4NDM2NTUw.YdG2KA.TvJkHHEniRlmrSf_GMrwJowLxJk";
 	static Long defaultServerId = 823664543628001400L;
 
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	static int delay = 15;
 
 	public static void main(String[] args) throws Exception {
-		JDA api = JDABuilder.createDefault(BOT_TOKEN)
+		JDA api = JDABuilder.createDefault(args[0])
 				.setMemberCachePolicy(MemberCachePolicy.VOICE)
 				.enableIntents(GatewayIntent.GUILD_MEMBERS)
 				.addEventListeners(new CustomListener())
