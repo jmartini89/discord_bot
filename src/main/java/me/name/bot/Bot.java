@@ -16,7 +16,7 @@ public class Bot {
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	static List<Guild> serverList = new ArrayList<>();
 	static double chances = 0.25;
-	static int delay = 1;
+	static int delay = 10;
 
 	public static void main(String @NotNull [] args) throws Exception {
 		JDABuilder.createDefault(args[0])
@@ -31,6 +31,6 @@ public class Bot {
 
 	private static void scheduled_roulette() {
 		Runnable chaos = Roulette::roulette;
-		scheduler.scheduleAtFixedRate(chaos, 0, delay, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(chaos, 0, delay, TimeUnit.MINUTES);
 	}
 }
