@@ -45,14 +45,13 @@ public class AdminCommand {
 
 		if (content.matches("help")) {
 			message.reply(
-							"\n"
-									+ "**vAlexa MAN:**\n"
-									+ "`!on` start chaos with default values\n"
-									+ "`!off` stop chaos\n"
-									+ "`!set [delay] [chances]` restart chaos with custom values\n"
-									+ "`delay`: a number in seconds, `chances`: a number between 0 and 1\n"
-									+ "`default values: [300] [0.25]`\n"
-									+ "`!666` **hell mode - use with caution!**")
+					"**vAlexa MAN:**\n"
+					+ "`!on` start chaos with default values\n"
+					+ "`!off` stop chaos\n"
+					+ "`!set [delay] [chances]` restart chaos with custom values\n"
+					+ "`delay`: a number in seconds, `chances`: a number between 0 and 1\n"
+					+ "`default values: [300] [0.25]`\n"
+					+ "`!666` **hell mode - use with caution!**")
 					.queue();
 		}
 	}

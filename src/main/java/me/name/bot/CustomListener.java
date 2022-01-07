@@ -2,6 +2,7 @@ package me.name.bot;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -18,6 +19,18 @@ public class CustomListener extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(@Nonnull GuildJoinEvent event) { Bot.serverList.add(new Server(event.getGuild())); }
+
+	@Override
+	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
+		Server server = null;
+		for (int i = 0; i < Bot.serverList.size(); i++) {
+			if (event.getGuild().equals(Bot.serverList.get(i).guild)) {
+				server = Bot.serverList.get(i);
+				break;
+			}
+		}
+		Bot.serverList.remove(server);
+	}
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
