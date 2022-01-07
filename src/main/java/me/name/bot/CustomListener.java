@@ -32,9 +32,8 @@ public class CustomListener extends ListenerAdapter {
 
 		Guild guild = event.getGuild();
 
-		if (member != null && member.hasPermission(ADMINISTRATOR)) {
-			if (AdminCommand.admin_command(guild, message, content)) return;
-		}
+		if (member != null && member.hasPermission(ADMINISTRATOR) && content.startsWith("!"))
+			AdminCommand.admin_command(guild, message, content.substring(1));
 
 		if (content.contains("contatto")
 				|| content.contains("random")
