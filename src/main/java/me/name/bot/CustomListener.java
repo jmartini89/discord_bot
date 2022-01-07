@@ -1,19 +1,23 @@
 package me.name.bot;
 
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
 public class CustomListener extends ListenerAdapter {
 	@Override
-	public void onGuildReady(@NotNull GuildReadyEvent event) {
-		Bot.serverList.add(new Server(event.getGuild()));
-	}
+	public void onGuildReady(@NotNull GuildReadyEvent event) { Bot.serverList.add(new Server(event.getGuild())); }
+
+	@Override
+	public void onGuildJoin(@Nonnull GuildJoinEvent event) { Bot.serverList.add(new Server(event.getGuild())); }
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
