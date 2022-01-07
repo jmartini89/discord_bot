@@ -8,15 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Bot {
-	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-	static List<Guild> serverList = new ArrayList<>();
-	static double chances = 0.25;
-	static int delay = 10;
+	static List<Server> serverList = new ArrayList<>();
 
 	public static void main(String @NotNull [] args) throws Exception {
 		JDABuilder.createDefault(args[0])
@@ -26,11 +20,5 @@ public class Bot {
 			.setActivity(Activity.playing("samba"))
 			.build()
 			.awaitReady();
-		scheduled_roulette();
-	}
-
-	private static void scheduled_roulette() {
-		Runnable chaos = Roulette::roulette;
-		scheduler.scheduleAtFixedRate(chaos, 0, delay, TimeUnit.MINUTES);
 	}
 }

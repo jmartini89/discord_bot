@@ -1,6 +1,7 @@
 package me.name.bot;
 
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,11 @@ import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
 public class CustomListener extends ListenerAdapter {
+	@Override
+	public void onGuildReady(@NotNull GuildReadyEvent event) {
+		Bot.serverList.add(new Server(event.getGuild()));
+	}
+
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (event.getAuthor().isBot()) return;
@@ -27,10 +33,10 @@ public class CustomListener extends ListenerAdapter {
 		Guild guild = event.getGuild();
 
 		if (member != null && member.hasPermission(ADMINISTRATOR)) {
-			if (chaos_command(guild, message, content)) return;
+			if (AdminCommand.admin_command(guild, message, content)) return;
 		}
 
-		if (content.contains("kick")
+		if (content.contains("contatto")
 				|| content.contains("random")
 				|| content.contains("pinterest")
 				|| content.contains("104")
@@ -39,27 +45,5 @@ public class CustomListener extends ListenerAdapter {
 			else message.addReaction("\uD83C\uDF00").queue();
 			Roulette.roulette(guild);
 		}
-	}
-
-	private static boolean chaos_command(Guild guild, Message message, @NotNull String content) {
-		if (content.matches("!ON!")) {
-			if (Bot.serverList.contains(guild)) {
-				message.addReaction("⁉").queue();
-				return true;
-			}
-			Bot.serverList.add(guild);
-			message.addReaction("✅").queue();
-			return true;
-		}
-		if (content.matches("!OFF!")) {
-			if (!Bot.serverList.contains(guild)) {
-				message.addReaction("⁉").queue();
-				return true;
-			}
-			Bot.serverList.remove(guild);
-			message.addReaction("✅").queue();
-			return true;
-		}
-		return false;
 	}
 }
