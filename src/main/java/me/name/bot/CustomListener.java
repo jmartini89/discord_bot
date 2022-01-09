@@ -10,26 +10,25 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
+import java.time.LocalTime;
+
 import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
 public class CustomListener extends ListenerAdapter {
 	@Override
-	public void onGuildReady(@NotNull GuildReadyEvent event) { Bot.serverList.add(new Server(event.getGuild())); }
+	public void onGuildReady(@NotNull GuildReadyEvent event) {
+		Bot.serverMap.put(event.getGuild().getIdLong(), new Server(event.getGuild()));
+	}
 
 	@Override
-	public void onGuildJoin(@Nonnull GuildJoinEvent event) { Bot.serverList.add(new Server(event.getGuild())); }
+	public void onGuildJoin(@Nonnull GuildJoinEvent event) {
+		Bot.serverMap.put(event.getGuild().getIdLong(), new Server(event.getGuild()));
+	}
 
 	@Override
 	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
-		Server server = null;
-		for (int i = 0; i < Bot.serverList.size(); i++) {
-			if (event.getGuild().equals(Bot.serverList.get(i).guild)) {
-				server = Bot.serverList.get(i);
-				break;
-			}
-		}
-		Bot.serverList.remove(server);
+		Bot.serverMap.remove(event.getGuild().getIdLong());
 	}
 
 	@Override
@@ -48,18 +47,31 @@ public class CustomListener extends ListenerAdapter {
 		}
 
 		Guild guild = event.getGuild();
+		Server server = Bot.serverMap.get(guild.getIdLong());
 
 		if (member != null && member.hasPermission(ADMINISTRATOR) && content.startsWith("!"))
 			AdminCommand.admin_command(guild, message, content.substring(1));
 
+		user_chaos(event, server, guild, message, content);
+	}
+
+	static private void user_chaos(
+			MessageReceivedEvent event, Server server, Guild guild, Message message, String content) {
 		if (content.contains("contatto")
 				|| content.contains("random")
 				|| content.contains("pinterest")
 				|| content.contains("104")
 				|| content.contains("199")) {
+			if (!LocalTime.now().isAfter(server.spam_time.plusSeconds(60L))) {
+				event.getAuthor().openPrivateChannel().queue(
+						act -> act.sendMessage("https://youtu.be/6lA3T78o9pY").queue());
+				message.delete().queue();
+				return;
+			}
 			if (guild.getIdLong() == 823664543628001400L) message.addReaction("♿").queue();
 			else message.addReaction("\uD83C\uDF00").queue();
-			Roulette.roulette(guild);
+			server.spam_time = LocalTime.now();
+			Roulette.roulette(Bot.serverMap.get(guild.getIdLong()), false);
 		}
 	}
 }

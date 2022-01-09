@@ -6,11 +6,11 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Bot {
-	static List<Server> serverList = new ArrayList<>();
+	static Map<Long, Server> serverMap = new HashMap<>();
 
 	public static void main(String @NotNull [] args) throws Exception {
 		JDABuilder.createDefault(args[0])

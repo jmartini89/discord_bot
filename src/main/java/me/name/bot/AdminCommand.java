@@ -6,13 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AdminCommand {
 	public static void admin_command(Guild guild, Message message, @NotNull String content) {
-		Server server = null;
-		for (int i = 0; i < Bot.serverList.size(); i++) {
-			if (guild.equals(Bot.serverList.get(i).guild)) {
-				server = Bot.serverList.get(i);
-				break;
-			}
-		}
+		Server server = Bot.serverMap.get(guild.getIdLong());
 		if (server == null) return;
 
 		if (content.startsWith("set")) {

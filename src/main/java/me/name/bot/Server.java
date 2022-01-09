@@ -2,6 +2,7 @@ package me.name.bot;
 
 import net.dv8tion.jda.api.entities.Guild;
 
+import java.time.LocalTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,10 +16,12 @@ public class Server {
 	boolean hell = false;
 	Runnable chaos;
 	ScheduledExecutorService scheduler;
+	LocalTime spam_time;
 
 	public Server(Guild guild) {
 		this.guild = guild;
-		this.chaos = () -> Roulette.roulette(this);
+		this.chaos = () -> Roulette.roulette(this, true);
+		spam_time = LocalTime.now();
 	}
 
 	public void start() {
