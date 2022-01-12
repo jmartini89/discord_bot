@@ -20,7 +20,7 @@ public class Server {
 
 	public Server(Guild guild) {
 		this.guild = guild;
-		this.chaos = () -> Roulette.roulette(this, true);
+		chaos = () -> Roulette.roulette(this);
 		spam_time = LocalTime.now();
 	}
 
