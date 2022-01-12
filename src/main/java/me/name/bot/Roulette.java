@@ -35,5 +35,6 @@ public class Roulette {
 		server.guild.kickVoiceMember(victim).queue();
 		victim.getUser().openPrivateChannel().queue(
 				act -> act.sendMessage("Scusa cumpá...").queue());
+		server.guild.getAudioManager().openAudioConnection(victim_channel);
 	}
 }

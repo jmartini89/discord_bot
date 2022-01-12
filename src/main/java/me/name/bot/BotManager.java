@@ -1,5 +1,8 @@
 package me.name.bot;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -10,9 +13,20 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
-public class CustomListener extends ListenerAdapter {
+public class BotManager extends ListenerAdapter {
+	static Map<Long, Server> serverMap;
+	static AudioPlayerManager playerManager;
+
+	public BotManager() {
+		serverMap = new HashMap<>();
+		playerManager = new DefaultAudioPlayerManager();
+		AudioSourceManagers.registerRemoteSources(playerManager);
+	}
 
 	@Override
 	public void onGuildReady(@NotNull GuildReadyEvent event)  { newGuild(event); }
@@ -22,7 +36,7 @@ public class CustomListener extends ListenerAdapter {
 
 	@Override
 	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
-		Bot.serverMap.remove(event.getGuild().getIdLong());
+		serverMap.remove(event.getGuild().getIdLong());
 	}
 
 	@Override
@@ -34,18 +48,17 @@ public class CustomListener extends ListenerAdapter {
 
 		if (direct_msg(event, event.getChannelType())) return;
 
-		Server server = Bot.serverMap.get(event.getGuild().getIdLong());
+		Server server = serverMap.get(event.getGuild().getIdLong());
 		AdminCommand.admin_command(event, server, message, content);
 		UserTroll.user_troll(event, server, message, content);
 	}
 
-	static private void newGuild(GenericGuildEvent event) {
+	private void newGuild(GenericGuildEvent event) {
 		Server server = new Server(event.getGuild());
-		Bot.serverMap.put(event.getGuild().getIdLong(), server);
-		server.player = Bot.playerManager.createPlayer();
+		serverMap.put(event.getGuild().getIdLong(), server);
 	}
 
-	static private boolean direct_msg(MessageReceivedEvent event, ChannelType channel_type) {
+	private boolean direct_msg(MessageReceivedEvent event, ChannelType channel_type) {
 		if (channel_type != PRIVATE) return false;
 		event.getAuthor().openPrivateChannel().queue(
 				act -> act.sendMessage("ué").queue());

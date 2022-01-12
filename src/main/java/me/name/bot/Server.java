@@ -25,6 +25,7 @@ public class Server {
 		this.guild = guild;
 		chaos = () -> Roulette.roulette(this);
 		spam_time = LocalTime.now();
+		player = BotManager.playerManager.createPlayer();
 	}
 
 	public void start() {
