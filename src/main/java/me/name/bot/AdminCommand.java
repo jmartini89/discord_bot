@@ -14,35 +14,37 @@ public class AdminCommand {
 				|| !content.startsWith("!"))
 			return;
 
-		if (content.startsWith("set")) {
-			if (!setServer(server, message, content)) return;
+		String cmd = content.substring(1);
+
+		if (cmd.startsWith("set")) {
+			if (!setServer(server, message, cmd)) return;
 			server.restart();
 			message.addReaction("✅").queue();
 			return;
 		}
 
-		if (content.matches("666")) {
+		if (cmd.matches("666")) {
 			if (!server.hell) message.addReaction("\uD83D\uDD25").queue();
 			else message.addReaction("\uD83D\uDCA7").queue();
 			server.hell = !server.hell;
 			return;
 		}
 
-		if (content.matches("on")) {
+		if (cmd.matches("on")) {
 			if (server.active) message.addReaction("⁉").queue();
 			else message.addReaction("✅").queue();
 			server.start();
 			return;
 		}
 
-		if (content.matches("off")) {
+		if (cmd.matches("off")) {
 			if (server.active) message.addReaction("✅").queue();
 			else message.addReaction("⁉").queue();
 			server.stop();
 			return;
 		}
 
-		if (content.matches("help")) {
+		if (cmd.matches("help")) {
 			message.reply(
 					"**vAlexa MAN:**\n"
 					+ "`!on` start chaos with default values\n"
@@ -55,8 +57,8 @@ public class AdminCommand {
 		}
 	}
 
-	private static boolean setServer(Server server, Message message, @NotNull String content) {
-		String[] tokens = content.split(" ");
+	private static boolean setServer(Server server, Message message, @NotNull String cmd) {
+		String[] tokens = cmd.split(" ");
 
 		if (tokens.length != 3) {
 			message.addReaction("⁉").queue();

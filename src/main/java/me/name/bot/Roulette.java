@@ -22,7 +22,6 @@ public class Roulette {
 		if (candidate_channels.isEmpty()) return;
 
 		VoiceChannel victim_channel = candidate_channels.get(rand.nextInt(candidate_channels.size()));
-
 		List<Member> members = victim_channel.getMembers();
 		Member victim = members.get(rand.nextInt(members.size()));
 

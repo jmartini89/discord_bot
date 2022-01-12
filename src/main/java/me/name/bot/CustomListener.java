@@ -1,6 +1,7 @@
 package me.name.bot;
 
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -12,15 +13,12 @@ import javax.annotation.Nonnull;
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
 public class CustomListener extends ListenerAdapter {
-	@Override
-	public void onGuildReady(@NotNull GuildReadyEvent event) {
-		Bot.serverMap.put(event.getGuild().getIdLong(), new Server(event.getGuild()));
-	}
 
 	@Override
-	public void onGuildJoin(@Nonnull GuildJoinEvent event) {
-		Bot.serverMap.put(event.getGuild().getIdLong(), new Server(event.getGuild()));
-	}
+	public void onGuildReady(@NotNull GuildReadyEvent event)  { newGuild(event); }
+
+	@Override
+	public void onGuildJoin(@Nonnull GuildJoinEvent event) { newGuild(event); }
 
 	@Override
 	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
@@ -37,8 +35,14 @@ public class CustomListener extends ListenerAdapter {
 		if (direct_msg(event, event.getChannelType())) return;
 
 		Server server = Bot.serverMap.get(event.getGuild().getIdLong());
-		AdminCommand.admin_command(event, server, message, content.substring(1));
+		AdminCommand.admin_command(event, server, message, content);
 		UserTroll.user_troll(event, server, message, content);
+	}
+
+	static private void newGuild(GenericGuildEvent event) {
+		Server server = new Server(event.getGuild());
+		Bot.serverMap.put(event.getGuild().getIdLong(), server);
+		server.player = Bot.playerManager.createPlayer();
 	}
 
 	static private boolean direct_msg(MessageReceivedEvent event, ChannelType channel_type) {

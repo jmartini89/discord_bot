@@ -1,5 +1,6 @@
 package me.name.bot;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.time.LocalTime;
@@ -17,6 +18,8 @@ public class Server {
 	Runnable chaos;
 	ScheduledExecutorService scheduler;
 	LocalTime spam_time;
+
+	AudioPlayer player;
 
 	public Server(Guild guild) {
 		this.guild = guild;
