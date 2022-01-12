@@ -1,13 +1,18 @@
 package me.name.bot;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
+
 public class AdminCommand {
-	public static void admin_command(Guild guild, Message message, @NotNull String content) {
-		Server server = Bot.serverMap.get(guild.getIdLong());
-		if (server == null) return;
+	public static void admin_command(
+			MessageReceivedEvent event, Server server, Message message, @NotNull String content) {
+		if (event.getMember() == null
+				|| !event.getMember().hasPermission(ADMINISTRATOR)
+				|| !content.startsWith("!"))
+			return;
 
 		if (content.startsWith("set")) {
 			if (!setServer(server, message, content)) return;

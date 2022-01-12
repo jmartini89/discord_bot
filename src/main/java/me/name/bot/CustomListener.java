@@ -9,11 +9,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-
-import java.time.LocalTime;
-import java.util.Arrays;
-
-import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 import static net.dv8tion.jda.api.entities.ChannelType.PRIVATE;
 
 public class CustomListener extends ListenerAdapter {
@@ -36,57 +31,20 @@ public class CustomListener extends ListenerAdapter {
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (event.getAuthor().isBot()) return;
 
-		Member member = event.getMember();
-		ChannelType channel_type = event.getChannelType();
 		Message message = event.getMessage();
 		String content = message.getContentRaw();
 
-		if (channel_type == PRIVATE) {
-			event.getAuthor().openPrivateChannel().queue(
-					act -> act.sendMessage("ué").queue());
-			return;
-		}
+		if (direct_msg(event, event.getChannelType())) return;
 
-		Guild guild = event.getGuild();
-		Server server = Bot.serverMap.get(guild.getIdLong());
-
-		if (member != null && member.hasPermission(ADMINISTRATOR) && content.startsWith("!"))
-			AdminCommand.admin_command(guild, message, content.substring(1));
-
-		user_troll(event, server, guild, message, content);
+		Server server = Bot.serverMap.get(event.getGuild().getIdLong());
+		AdminCommand.admin_command(event, server, message, content.substring(1));
+		UserTroll.user_troll(event, server, message, content);
 	}
 
-	static private void user_troll(
-			MessageReceivedEvent event, Server server, Guild guild, Message message, String content) {
-		if (!trigger(content)) return;
-		if (spam(event, server, message)) return;
-
-		if (guild.getIdLong() == 823664543628001400L) message.addReaction("♿").queue();
-		else message.addReaction("\uD83C\uDF00").queue();
-
-		if (Math.random() > 0.5) return;
-		Roulette.roulette(Bot.serverMap.get(guild.getIdLong()));
-	}
-
-	static private boolean trigger(String content) {
-		String[] trigger = {
-				"contatto",
-				"random",
-				"pinterest",
-				"104",
-				"199"};
-
-		return Arrays.stream(trigger).anyMatch(content::contains);
-	}
-
-	static private boolean spam(MessageReceivedEvent event, Server server, Message message) {
-		if (!LocalTime.now().isAfter(server.spam_time.plusSeconds(60L))) {
-			event.getAuthor().openPrivateChannel().queue(
-					act -> act.sendMessage("https://youtu.be/6lA3T78o9pY").queue());
-			message.delete().queue();
-			return true;
-		}
-		server.spam_time = LocalTime.now();
-		return false;
+	static private boolean direct_msg(MessageReceivedEvent event, ChannelType channel_type) {
+		if (channel_type != PRIVATE) return false;
+		event.getAuthor().openPrivateChannel().queue(
+				act -> act.sendMessage("ué").queue());
+		return true;
 	}
 }
