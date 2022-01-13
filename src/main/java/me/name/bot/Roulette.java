@@ -2,6 +2,7 @@ package me.name.bot;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Roulette {
-	public static void roulette(Server server) {
+	public static void roulette(@NotNull Server server) {
 		Random rand = new Random();
 
 		List<VoiceChannel> voice_channels = server.guild.getVoiceChannels();
@@ -35,6 +36,5 @@ public class Roulette {
 		server.guild.kickVoiceMember(victim).queue();
 		victim.getUser().openPrivateChannel().queue(
 				act -> act.sendMessage("Scusa cumpá...").queue());
-//		server.guild.getAudioManager().openAudioConnection(victim_channel);
 	}
 }

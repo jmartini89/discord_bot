@@ -24,37 +24,14 @@ public class BotManager extends ListenerAdapter {
 
 	public BotManager() {
 		serverMap = new HashMap<>();
+
 		playerManager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(playerManager);
+		AudioSourceManagers.registerLocalSource(playerManager);
 	}
 
-	@Override
-	public void onGuildReady(@NotNull GuildReadyEvent event)  { newGuild(event); }
-
-	@Override
-	public void onGuildJoin(@Nonnull GuildJoinEvent event) { newGuild(event); }
-
-	@Override
-	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
-		serverMap.remove(event.getGuild().getIdLong());
-	}
-
-	@Override
-	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		if (event.getAuthor().isBot()) return;
-
-		Message message = event.getMessage();
-		String content = message.getContentRaw();
-
-		if (direct_msg(event, event.getChannelType())) return;
-
-		Server server = serverMap.get(event.getGuild().getIdLong());
-		AdminCommand.admin_command(event, server, message, content);
-		UserTroll.user_troll(event, server, message, content);
-	}
-
-	private void newGuild(GenericGuildEvent event) {
-		Server server = new Server(event.getGuild());
+	private void newGuild(@NotNull GenericGuildEvent event) {
+		Server server = new Server(event.getGuild(), playerManager);
 		serverMap.put(event.getGuild().getIdLong(), server);
 	}
 
@@ -63,5 +40,36 @@ public class BotManager extends ListenerAdapter {
 		event.getAuthor().openPrivateChannel().queue(
 				act -> act.sendMessage("ué").queue());
 		return true;
+	}
+
+	@Override
+	public void onGuildReady(@NotNull GuildReadyEvent event)  {
+		newGuild(event);
+	}
+
+	@Override
+	public void onGuildJoin(@Nonnull GuildJoinEvent event) {
+		newGuild(event);
+	}
+
+	@Override
+	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
+		serverMap.get(event.getGuild().getIdLong()).stop();
+		serverMap.get(event.getGuild().getIdLong()).player.destroy();
+		serverMap.remove(event.getGuild().getIdLong());
+	}
+
+	@Override
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+		if (event.getAuthor().isBot()) return;
+		if (direct_msg(event, event.getChannelType())) return;
+
+		Message message = event.getMessage();
+		String content = message.getContentRaw();
+
+		if (!content.startsWith("!")) return;
+		Server server = serverMap.get(event.getGuild().getIdLong());
+		CmdAdmin.admin_command(event, server, message, content.substring(1));
+		CmdUser.user_command(event, server, message, content.substring(1));
 	}
 }

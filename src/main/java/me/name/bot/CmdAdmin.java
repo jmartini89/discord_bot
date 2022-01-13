@@ -6,45 +6,41 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 
-public class AdminCommand {
+public class CmdAdmin {
 	public static void admin_command(
-			MessageReceivedEvent event, Server server, Message message, @NotNull String content) {
-		if (event.getMember() == null
-				|| !event.getMember().hasPermission(ADMINISTRATOR)
-				|| !content.startsWith("!"))
+			@NotNull MessageReceivedEvent event, Server server, Message message, @NotNull String content) {
+		if (event.getMember() == null || !event.getMember().hasPermission(ADMINISTRATOR))
 			return;
 
-		String cmd = content.substring(1);
-
-		if (cmd.startsWith("set")) {
-			if (!setServer(server, message, cmd)) return;
+		if (content.startsWith("set")) {
+			if (!setServer(server, message, content)) return;
 			server.restart();
 			message.addReaction("✅").queue();
 			return;
 		}
 
-		if (cmd.matches("666")) {
+		if (content.matches("666")) {
 			if (!server.hell) message.addReaction("\uD83D\uDD25").queue();
 			else message.addReaction("\uD83D\uDCA7").queue();
 			server.hell = !server.hell;
 			return;
 		}
 
-		if (cmd.matches("on")) {
+		if (content.matches("on")) {
 			if (server.active) message.addReaction("⁉").queue();
 			else message.addReaction("✅").queue();
 			server.start();
 			return;
 		}
 
-		if (cmd.matches("off")) {
+		if (content.matches("off")) {
 			if (server.active) message.addReaction("✅").queue();
 			else message.addReaction("⁉").queue();
 			server.stop();
 			return;
 		}
 
-		if (cmd.matches("help")) {
+		if (content.matches("help")) {
 			message.reply(
 					"**vAlexa MAN:**\n"
 					+ "`!on` start chaos with default values\n"
@@ -57,8 +53,8 @@ public class AdminCommand {
 		}
 	}
 
-	private static boolean setServer(Server server, Message message, @NotNull String cmd) {
-		String[] tokens = cmd.split(" ");
+	private static boolean setServer(Server server, Message message, @NotNull String content) {
+		String[] tokens = content.split(" ");
 
 		if (tokens.length != 3) {
 			message.addReaction("⁉").queue();
