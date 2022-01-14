@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason.STOPPED;
+
 public class TrackScheduler extends AudioEventAdapter {
 	private final Server server;
 	private final AudioPlayer player;
@@ -21,8 +23,10 @@ public class TrackScheduler extends AudioEventAdapter {
 		this.queue = new LinkedBlockingQueue<>();
 	}
 
-	public void queue(AudioTrack track) {
-		if (!player.startTrack(track, true)) { queue.offer(track); }
+	public void queue(AudioTrack track) throws Exception {
+		if (!player.startTrack(track, true)) {
+			if (!queue.offer(track)) throw new Exception("TrackScheduler's queue is full");
+		}
 	}
 
 	public void nextTrack() {
@@ -41,7 +45,8 @@ public class TrackScheduler extends AudioEventAdapter {
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, @NotNull AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) nextTrack();
-		server.guild.getAudioManager().closeAudioConnection();
+		if (endReason == STOPPED) server.guild.getAudioManager().closeAudioConnection();
+		if (player.getPlayingTrack() == null) server.guild.getAudioManager().closeAudioConnection();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package me.name.bot;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
 import java.util.concurrent.Executors;
@@ -24,7 +25,7 @@ public class Server {
 	public final AudioPlayer player;
 	public final TrackScheduler track_scheduler;
 
-	public Server(Guild guild, AudioPlayerManager manager) {
+	public Server(Guild guild, @NotNull AudioPlayerManager manager) {
 		this.guild = guild;
 
 		chaos = () -> Roulette.roulette(this);
@@ -34,6 +35,7 @@ public class Server {
 		track_scheduler = new TrackScheduler(player, this);
 		player.addListener(track_scheduler);
 		this.guild.getAudioManager().setSendingHandler(this.getSendHandler());
+		player.setVolume(75);
 	}
 
 	public AudioPlayerSendHandler getSendHandler() { return new AudioPlayerSendHandler(player); }

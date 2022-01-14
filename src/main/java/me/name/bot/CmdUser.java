@@ -1,5 +1,7 @@
 package me.name.bot;
 
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 public class CmdUser {
 	public static void user_command(MessageReceivedEvent event, Server server, Message message, String content) {
 		if (troll(event, server, message, content)) return;
-//		music(event, server, content);
+		music(event, server, message, content);
 	}
 
 	private static boolean troll(MessageReceivedEvent event, Server server, Message message, String content) {
@@ -21,15 +23,13 @@ public class CmdUser {
 		else message.addReaction("\uD83C\uDF00").queue();
 
 		if (Math.random() > 0.5) return true;
-//		Roulette.roulette(server);
-		Transmit.audio(server, "zvOWew99EAk", null);
+		Roulette.roulette(server);
 		return true;
 	}
 
 	private static boolean trigger(@NotNull String content) {
 		String[] trigger_lst = {
 				"troll",
-				"kick",
 				"contatto",
 				"random",
 				"pinterest",
@@ -52,9 +52,31 @@ public class CmdUser {
 		return false;
 	}
 
-	private static void music(MessageReceivedEvent event, Server server, @NotNull String content) {
+	private static void music(
+			@NotNull MessageReceivedEvent event, Server server, Message message, @NotNull String content) {
+		Member member = event.getMember();
+		if (member == null) return;
+		GuildVoiceState state = member.getVoiceState();
+		if (state == null) return;
+		if (!state.inAudioChannel()) {
+			message.addReaction("❌").queue();
+			return;
+		}
+
 		String[] cmd = content.split(" ", 2);
-		if (cmd[0].equals("stop")) server.player.stopTrack();
-		if (cmd[0].equals("play") && cmd.length == 2) Transmit.audio(server, cmd[1], event.getTextChannel());
+		if (cmd[0].equals("stop")) {
+			message.addReaction("\uD83D\uDED1").queue();
+			server.player.stopTrack();
+			return;
+		}
+		if (cmd[0].equals("next")) {
+			message.addReaction("⏭").queue();
+			server.track_scheduler.nextTrack();
+			return;
+		}
+		if (cmd[0].equals("play") && cmd.length == 2) {
+			message.addReaction("▶").queue();
+			Player_Tx.audio(server, cmd[1], member.getVoiceState().getChannel(), event.getTextChannel());
+		}
 	}
 }

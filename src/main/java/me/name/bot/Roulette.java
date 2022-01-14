@@ -33,8 +33,9 @@ public class Roulette {
 			victim.mute(true).queue(act ->  victim.mute(false).queueAfter(5, TimeUnit.SECONDS));
 			return;
 		}
-		server.guild.kickVoiceMember(victim).queue();
-		victim.getUser().openPrivateChannel().queue(
-				act -> act.sendMessage("Scusa cumpá...").queue());
+//		server.guild.kickVoiceMember(victim).queue();
+//		victim.getUser().openPrivateChannel().queue(
+//				act -> act.sendMessage("Scusa cumpá...").queue());
+		Player_Tx.audio(server, "zvOWew99EAk", victim_channel, null);
 	}
 }
