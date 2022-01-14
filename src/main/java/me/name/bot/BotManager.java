@@ -69,7 +69,7 @@ public class BotManager extends ListenerAdapter {
 
 		if (!content.startsWith("!")) return;
 		Server server = serverMap.get(event.getGuild().getIdLong());
-		CmdAdmin.admin_command(event, server, message, content.substring(1));
+		if (CmdAdmin.admin_command(event, server, message, content.substring(1))) return;
 		CmdUser.user_command(event, server, message, content.substring(1));
 	}
 }

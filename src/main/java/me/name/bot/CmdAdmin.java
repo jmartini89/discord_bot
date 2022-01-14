@@ -7,37 +7,37 @@ import org.jetbrains.annotations.NotNull;
 import static net.dv8tion.jda.api.Permission.ADMINISTRATOR;
 
 public class CmdAdmin {
-	public static void admin_command(
+	public static boolean admin_command(
 			@NotNull MessageReceivedEvent event, Server server, Message message, @NotNull String content) {
 		if (event.getMember() == null || !event.getMember().hasPermission(ADMINISTRATOR))
-			return;
+			return false;
 
 		if (content.startsWith("set")) {
-			if (!setServer(server, message, content)) return;
+			if (!setServer(server, message, content)) return false;
 			server.restart();
 			message.addReaction("✅").queue();
-			return;
+			return true;
 		}
 
 		if (content.matches("666")) {
 			if (!server.hell) message.addReaction("\uD83D\uDD25").queue();
 			else message.addReaction("\uD83D\uDCA7").queue();
 			server.hell = !server.hell;
-			return;
+			return true;
 		}
 
 		if (content.matches("on")) {
 			if (server.active) message.addReaction("⁉").queue();
 			else message.addReaction("✅").queue();
 			server.start();
-			return;
+			return true;
 		}
 
 		if (content.matches("off")) {
 			if (server.active) message.addReaction("✅").queue();
 			else message.addReaction("⁉").queue();
 			server.stop();
-			return;
+			return true;
 		}
 
 		if (content.matches("help")) {
@@ -50,7 +50,9 @@ public class CmdAdmin {
 					+ "`default values: [300] [0.25]`\n"
 					+ "`!666` **hell mode - use with caution!**")
 					.queue();
+			return true;
 		}
+		return false;
 	}
 
 	private static boolean setServer(Server server, Message message, @NotNull String content) {
