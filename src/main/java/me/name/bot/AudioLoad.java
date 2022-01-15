@@ -8,10 +8,14 @@ import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
-public class Player_Tx {
-	public static void audio(
-			@NotNull Server server, @NotNull String cmd, AudioChannel audio_channel, TextChannel text_channel) {
-		BotManager.playerManager.loadItemOrdered(server.player, cmd, new AudioLoadResultHandler() {
+public class AudioLoad {
+	public static void load(
+			@NotNull Server server,
+			@NotNull String track_str,
+			AudioChannel audio_channel,
+			TextChannel text_channel) {
+
+		BotManager.playerManager.loadItemOrdered(server.player, track_str, new AudioLoadResultHandler() {
 			@Override
 			public void trackLoaded(AudioTrack track) {
 				if (text_channel != null) text_channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
@@ -35,11 +39,11 @@ public class Player_Tx {
 
 			@Override
 			public void noMatches() {
-				if (!cmd.startsWith("ytsearch:")) {
-					Player_Tx.audio(server, "ytsearch:".concat(cmd), audio_channel, text_channel);
+				if (!track_str.startsWith("ytsearch:")) {
+					AudioLoad.load(server, "ytsearch:".concat(track_str), audio_channel, text_channel);
 					return;
 				}
-				if (text_channel != null) text_channel.sendMessage("Nothing found by " + cmd).queue();
+				if (text_channel != null) text_channel.sendMessage("Nothing found by " + track_str).queue();
 			}
 
 			@Override

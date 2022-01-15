@@ -10,15 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason.STOPPED;
-
-public class TrackScheduler extends AudioEventAdapter {
-	private final Server server;
+public class AudioTrackScheduler extends AudioEventAdapter {
 	private final AudioPlayer player;
 	private final BlockingQueue<AudioTrack> queue;
 
-	public TrackScheduler(AudioPlayer player, Server server) {
-		this.server = server;
+	public AudioTrackScheduler(AudioPlayer player) {
 		this.player = player;
 		this.queue = new LinkedBlockingQueue<>();
 	}
@@ -45,12 +41,12 @@ public class TrackScheduler extends AudioEventAdapter {
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, @NotNull AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) nextTrack();
-		if (endReason == STOPPED) server.guild.getAudioManager().closeAudioConnection();
-		if (player.getPlayingTrack() == null) server.guild.getAudioManager().closeAudioConnection();
 	}
 
 	@Override
-	public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {}
+	public void onTrackException(AudioPlayer player, AudioTrack track, @NotNull FriendlyException exception) {
+		exception.printStackTrace();
+	}
 
 	@Override
 	public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {}

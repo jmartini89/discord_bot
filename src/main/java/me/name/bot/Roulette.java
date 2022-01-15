@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Roulette {
 	public static void roulette(@NotNull Server server) {
+		if (Math.random() > server.chances) return;
 		Random rand = new Random();
 
 		List<VoiceChannel> voice_channels = server.guild.getVoiceChannels();
@@ -30,12 +31,16 @@ public class Roulette {
 			// Admins can NOT de-mute members disconnected from voice channels
 			// This method requires fallback implementation: de-mute routine/scheduler
 			for (Member member : members) member.mute(false).complete();
-			victim.mute(true).queue(act ->  victim.mute(false).queueAfter(5, TimeUnit.SECONDS));
+			victim.mute(true).queue(act -> victim.mute(false).queueAfter(5, TimeUnit.SECONDS));
 			return;
 		}
 //		server.guild.kickVoiceMember(victim).queue();
 //		victim.getUser().openPrivateChannel().queue(
 //				act -> act.sendMessage("Scusa cumpá...").queue());
-		Player_Tx.audio(server, "zvOWew99EAk", victim_channel, null);
+		AudioLoad.load(
+				server,
+				Bot.file_tracks.get(rand.nextInt(Bot.file_tracks.size())),
+				victim_channel,
+				null);
 	}
 }

@@ -47,7 +47,7 @@ public class CmdAdmin {
 					+ "`!off` stop chaos\n"
 					+ "`!set [delay] [chances]` restart chaos with custom values\n"
 					+ "`delay`: a number in seconds, `chances`: a number between 0 and 1\n"
-					+ "`default values: [300] [0.25]`\n"
+					+ "`default values: [" + server.delay + "] [" + server.chances + "]`\n"
 					+ "`!666` **hell mode - use with caution!**")
 					.queue();
 			return true;
