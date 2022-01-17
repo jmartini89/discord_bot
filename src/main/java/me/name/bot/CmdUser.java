@@ -68,7 +68,7 @@ public class CmdUser {
 			AudioLoad.load(server, cmd[1], member.getVoiceState().getChannel(), event.getTextChannel());
 		}
 		if (cmd[0].equals("next")) server.track_scheduler.nextTrack();
-		if (cmd[0].equals("stop")) server.player.stopTrack();
+		if (cmd[0].equals("stop")) server.track_scheduler.stop();
 		message.addReaction(emotes[candidate]).queue();
 	}
 

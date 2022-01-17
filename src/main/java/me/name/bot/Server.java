@@ -39,7 +39,7 @@ public class Server {
 		track_scheduler = new AudioTrackScheduler(player);
 		player.addListener(track_scheduler);
 		this.guild.getAudioManager().setSendingHandler(this.getSendHandler());
-		player.setVolume(100);
+		player.setVolume(50);
 
 		audio_activity = () -> tracker(this);
 		audio_scheduler = Executors.newScheduledThreadPool(1);
